@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.DTO.User
 {
-    internal class Session
+    public class Session
     {
+        public int IdUtilisateur { get; set; }
+        public string? NomComplet { get; set; }
+        public string? Email { get; set; }
+        public string? Role { get; set; }
     }
 }
