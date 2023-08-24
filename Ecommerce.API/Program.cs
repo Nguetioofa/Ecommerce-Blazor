@@ -1,6 +1,10 @@
 using Ecommerce.Repositorie.DBContext;
 using Microsoft.EntityFrameworkCore;
 
+using Ecommerce.Repositorie.Contrat;
+using Ecommerce.Repositorie.Implementation;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,6 +19,8 @@ builder.Services.AddDbContext<DbecommerceContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnection"));
 });
 
+builder.Services.AddTransient(typeof(IGenericRepositorie<>), typeof(GenericRepositorie<>));
+builder.Services.AddScoped<IVenteRepositorie, VenteRepositorie>();
 
 var app = builder.Build();
 
