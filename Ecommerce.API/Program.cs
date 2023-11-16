@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Ecommerce.Repositorie.Contrat;
 using Ecommerce.Repositorie.Implementation;
 
+using Ecommerce.Utilitaires;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddDbContext<DbecommerceContext>(option =>
 builder.Services.AddTransient(typeof(IGenericRepositorie<>), typeof(GenericRepositorie<>));
 builder.Services.AddScoped<IVenteRepositorie, VenteRepositorie>();
 
+builder.Services.AddAutoMapper(typeof(AutoMapperProfil));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
