@@ -11,26 +11,26 @@ namespace Ecommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UtilisateurController : ControllerBase
+    public class ProduitController : ControllerBase
     {
-        private readonly IUtilisateurService _utilisateurService;
+        private readonly IProduitService _produitService;
 
-        public UtilisateurController(IUtilisateurService utilisateurService)
+        public ProduitController(IProduitService produitService)
         {
-                _utilisateurService = utilisateurService;
+            _produitService = produitService;
         }
 
-        [HttpGet("list/{role:alpha}/{chercher:alpha?}")]
-        public async Task<IActionResult> List(string role,string recherche = "NA")
+        [HttpGet("list/{chercher:alpha?}")]
+        public async Task<IActionResult> List(string recherche = "NA")
         {
-            var response = new ReponseDTO<List<UtilisateurDTO>>();
+            var response = new ReponseDTO<List<ProduitDTO>>();
 
             try
             {
                 if (recherche == "NA") recherche = string.Empty;
 
                 response.EsCorrect = true;
-                response.Resultat = await _utilisateurService.List(role, recherche);
+                response.Resultat = await _produitService.List(recherche);
                 
             }
             catch (Exception ex)
@@ -43,15 +43,39 @@ namespace Ecommerce.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("catalogue/{categorie:alpha}/{chercher:alpha?}")]
+        public async Task<IActionResult> Catalogue(string categorie,string recherche = "NA")
+        {
+            var response = new ReponseDTO<List<ProduitDTO>>();
+
+            try
+            {
+                if (recherche.ToLower() == "todos") categorie = string.Empty;
+                if (recherche == "NA") recherche = string.Empty;
+
+                response.EsCorrect = true;
+                response.Resultat = await _produitService.Catalogue(categorie,recherche);
+
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrect = false;
+                response.Message = ex.Message;
+
+            }
+
+            return Ok(response);
+        }
+
         [HttpGet("get/{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            var response = new ReponseDTO<UtilisateurDTO>();
+            var response = new ReponseDTO<ProduitDTO>();
 
             try
             {
                 response.EsCorrect = true;
-                response.Resultat = await _utilisateurService.Get(id);
+                response.Resultat = await _produitService.Get(id);
             }
             catch (Exception ex)
             {
@@ -64,14 +88,14 @@ namespace Ecommerce.API.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> Add([FromBody]UtilisateurDTO model)
+        public async Task<IActionResult> Add([FromBody] ProduitDTO model)
         {
-            var response = new ReponseDTO<UtilisateurDTO>();
+            var response = new ReponseDTO<ProduitDTO>();
 
             try
             {
                 response.EsCorrect = true;
-                response.Resultat = await _utilisateurService.Add(model);
+                response.Resultat = await _produitService.Add(model);
             }
             catch (Exception ex)
             {
@@ -82,34 +106,16 @@ namespace Ecommerce.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("authentification")]
-        public async Task<IActionResult> Authentification([FromBody] LoginDTO model)
-        {
-            var response = new ReponseDTO<SessionDTO>();
-
-            try
-            {
-                response.EsCorrect = true;
-                response.Resultat = await _utilisateurService.Autorization(model);
-            }
-            catch (Exception ex)
-            {
-                response.EsCorrect = false;
-                response.Message = ex.Message;
-            }
-
-            return Ok(response);
-        }
 
         [HttpPut("update")]
-        public async Task<IActionResult> Update([FromBody] UtilisateurDTO model)
+        public async Task<IActionResult> Update([FromBody] ProduitDTO model)
         {
             var response = new ReponseDTO<bool>();
 
             try
             {
                 response.EsCorrect = true;
-                response.Resultat = await _utilisateurService.Update(model);
+                response.Resultat = await _produitService.Update(model);
             }
             catch (Exception ex)
             {
@@ -128,7 +134,7 @@ namespace Ecommerce.API.Controllers
             try
             {
                 response.EsCorrect = true;
-                response.Resultat = await _utilisateurService.Delete(id);
+                response.Resultat = await _produitService.Delete(id);
             }
             catch (Exception ex)
             {
