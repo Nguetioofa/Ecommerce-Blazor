@@ -34,6 +34,17 @@ builder.Services.AddScoped<IProduitService, ProduitService>();
 builder.Services.AddScoped<ICategorieService, CategorieService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
+
+builder.Services.AddCors(option =>
+{
+    option.AddPolicy("PolitiqueAccess", app =>
+    {
+        app.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +53,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("PolitiqueAccess");
 
 app.UseAuthorization();
 
