@@ -10,8 +10,8 @@ namespace Ecommerce.Repositorie.Contrat
     public interface IGenericRepositorie<TModel> where TModel : class
     {
         IQueryable<TModel> Get(Expression<Func<TModel,bool>>? filtre = null);
-        Task<TModel> Creer(TModel model);
-        Task<bool> Editer(TModel model);
-        Task<bool> Effacer(TModel model);
+        Task<TModel> Add(TModel model);
+        Task<bool> Update(TModel model);
+        Task<bool> Delete(TModel model);
     }
 }

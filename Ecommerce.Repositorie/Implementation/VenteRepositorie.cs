@@ -19,7 +19,7 @@ namespace Ecommerce.Repositorie.Implementation
             _dbContext = dbContext;
         }
 
-        public async Task<Vente> Enregister(Vente vente)
+        public async Task<Vente> Save(Vente vente)
         {
             Vente vente1 = new Vente();
 

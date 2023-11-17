@@ -6,6 +6,9 @@ using Ecommerce.Repositorie.Implementation;
 
 using Ecommerce.Utilitaires;
 
+using Ecommerce.Service.Contrats;
+using Ecommerce.Service.Implementations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,6 +27,13 @@ builder.Services.AddTransient(typeof(IGenericRepositorie<>), typeof(GenericRepos
 builder.Services.AddScoped<IVenteRepositorie, VenteRepositorie>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfil));
+
+builder.Services.AddScoped<IVenteService, VenteService>();
+builder.Services.AddScoped<IUtilisateurService, UtilisateurService>();
+builder.Services.AddScoped<IProduitService, ProduitService>();
+builder.Services.AddScoped<ICategorieService, CategorieService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

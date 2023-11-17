@@ -9,6 +9,6 @@ namespace Ecommerce.Repositorie.Contrat
 {
     public interface IVenteRepositorie : IGenericRepositorie<Vente>
     {
-        Task<Vente> Enregister(Vente vente);
+        Task<Vente> Save(Vente vente);
     }
 }

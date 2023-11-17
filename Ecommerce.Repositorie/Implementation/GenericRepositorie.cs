@@ -19,7 +19,7 @@ namespace Ecommerce.Repositorie.Implementation
             _dbContext = dbContext;
         }
 
-        public async Task<TModel> Creer(TModel model)
+        public async Task<TModel> Add(TModel model)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace Ecommerce.Repositorie.Implementation
             }
         }
 
-        public async Task<bool> Editer(TModel model)
+        public async Task<bool> Update(TModel model)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace Ecommerce.Repositorie.Implementation
             }
         }
 
-        public async Task<bool> Effacer(TModel model)
+        public async Task<bool> Delete(TModel model)
         {
             try
             {
