@@ -94,7 +94,7 @@ namespace Ecommerce.Service.Implementations
         {
             try
             {
-                var result = _repositorie.Get(u => u.Nom.ToLower().Contains(chercher.ToLower()));
+                var result = _repositorie.Get(u => u.Nom!.ToLower().Contains(chercher.ToLower()));
                 var element = _mapper.Map<List<CategorieDTO>>(await result.ToListAsync());
 
                 return element;
