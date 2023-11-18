@@ -12,19 +12,19 @@ namespace Ecommerce.DTO.User
         public int IdUtilisateur { get; set; }
 
         [Required(ErrorMessage = "Le Nom est obligatoire")]
-        public string? NomComplet { get; set; }
+        public string NomComplet { get; set; }
 
         [DataType(DataType.EmailAddress)]
         [Required(ErrorMessage = "Le L'Email est obligatoire")]
-        public string? Email { get; set; }
+        public string Email { get; set; }
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Le Mot de passe est obligatoire")]
-        public string? MotPasse { get; set; }
+        public string MotPasse { get; set; }
 
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "La confirmation du mot de passe est obligatoire")]
-        public string? ConfirmerMotPasse { get; set; }
+        public string ConfirmerMotPasse { get; set; }
 
-        public string? Role { get; set; }
+        public string Role { get; set; }
     }
 }

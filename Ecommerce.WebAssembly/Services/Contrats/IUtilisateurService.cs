@@ -9,7 +9,7 @@ namespace Ecommerce.WebAssembly.Services.Contrats
         Task<ReponseDTO<UtilisateurDTO>> Get(int id);
         Task<ReponseDTO<SessionDTO>> Autorization(LoginDTO model);
         Task<ReponseDTO<UtilisateurDTO>> Add(UtilisateurDTO model);
-        Task<ReponseDTO<bool>> Update(LoginDTO model);
+        Task<ReponseDTO<bool>> Update(UtilisateurDTO model);
         Task<ReponseDTO<bool>> Delete(int id);
 
     }

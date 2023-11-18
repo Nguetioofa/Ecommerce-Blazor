@@ -32,23 +32,25 @@ namespace Ecommerce.WebAssembly.Services.Implementations
 
         public async Task<ReponseDTO<bool>> Delete(int id)
         {
-            return await _httpClient.DeleteFromJsonAsync<ReponseDTO<bool>>($"{CONTOLLERNAME}/delete{id}");
+            var response = await _httpClient.DeleteFromJsonAsync<ReponseDTO<bool>>($"{CONTOLLERNAME}/delete/{id}");
 
+            return response;
         }
 
         public async Task<ReponseDTO<UtilisateurDTO>> Get(int id)
         {
-            return await _httpClient.GetFromJsonAsync<ReponseDTO<UtilisateurDTO>>($"{CONTOLLERNAME}/get{id}");
-
+            var response = await _httpClient.GetFromJsonAsync<ReponseDTO<UtilisateurDTO>>($"{CONTOLLERNAME}/get/{id}");
+            return response;
         }
 
         public async Task<ReponseDTO<List<UtilisateurDTO>>> List(string role, string recheche)
         {
-            return await _httpClient.GetFromJsonAsync<ReponseDTO<List<UtilisateurDTO>>>($"{CONTOLLERNAME}/list/{role.ToLower()}/{recheche.ToLower()}");
+            var response = await _httpClient.GetFromJsonAsync<ReponseDTO<List<UtilisateurDTO>>>($"{CONTOLLERNAME}/list/{role.ToLower()}/{recheche.ToLower()}");
+            return response;
 
         }
 
-        public async Task<ReponseDTO<bool>> Update(LoginDTO model)
+        public async Task<ReponseDTO<bool>> Update(UtilisateurDTO model)
         {
             var response = await _httpClient.PutAsJsonAsync($"{CONTOLLERNAME}/update", model);
             var result = await response.Content.ReadFromJsonAsync<ReponseDTO<bool>>();

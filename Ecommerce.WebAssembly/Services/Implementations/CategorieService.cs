@@ -27,13 +27,13 @@ namespace Ecommerce.WebAssembly.Services.Implementations
 
         public async Task<ReponseDTO<bool>> Delete(int id)
         {
-            return await _httpClient.DeleteFromJsonAsync<ReponseDTO<bool>>($"{CONTOLLERNAME}/delete{id}");
+            return await _httpClient.DeleteFromJsonAsync<ReponseDTO<bool>>($"{CONTOLLERNAME}/delete/{id}");
 
         }
 
         public async Task<ReponseDTO<CategorieDTO>> Get(int id)
         {
-            return await _httpClient.GetFromJsonAsync<ReponseDTO<CategorieDTO>>($"{CONTOLLERNAME}/get{id}");
+            return await _httpClient.GetFromJsonAsync<ReponseDTO<CategorieDTO>>($"{CONTOLLERNAME}/get/{id}");
 
         }
 

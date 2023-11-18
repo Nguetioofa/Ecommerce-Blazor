@@ -1,8 +1,129 @@
 ﻿@page "/utilisateur"
 @page "/utilisateur/{id:int}"
 
-<h3>Utilisateur</h3>
+@inject IUtilisateurService utilisateurService
+@inject IToastService toastService
+@inject NavigationManager _nav
+
+<div class="row justify-content-center  mt-3">
+    <p class="col-sm-12 col-md-8 col-xl-10 h4 mt-2">@Titre</p>
+</div>
+<div class="row justify-content-center  mt-3">
+    <div class="col-sm-12 col-md-8 col-xl-10">
+        <EditForm Model="model" OnValidSubmit="SavegarderChangements">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+
+            <div class="input-group">
+                <span class="input-group-text bg-light" id="basic-addon3">Nom complet</span>
+                <input type="text" class="form-control" @bind-value="model.NomComplet">
+            </div>
+            <ValidationMessage For="@(()=>model.NomComplet)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Email</span>
+                <input type="text" class="form-control" @bind-value="model.Email"><br />
+            </div>
+            <ValidationMessage For="@(()=>model.Email)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Mot de passe</span>
+                <input type="password" class="form-control" @bind-value="model.MotPasse">
+            </div>
+            <ValidationMessage For="@(()=>model.MotPasse)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Confirmer Mot de passe</span>
+                <input type="password" class="form-control" @bind-value="model.ConfirmerMotPasse">
+            </div>
+            <ValidationMessage For="@(()=>model.ConfirmerMotPasse)" />
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary" style="width:130px">@Bouton</button>
+                <a href="/utilisateurs" class="btn btn-secondary" style="width:130px">retour</a>
+            </div>
+        </EditForm>
+
+
+    </div>
+
+</div>
 
 @code {
 
+    [Parameter]
+    public int id { get; set; }
+    private string Titre = "Nouvel Utilisateur";
+    private string Bouton = "Creer";
+    private UtilisateurDTO model = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id != 0)
+        {
+            Titre = "Editer Utilisateur";
+            Bouton = "Modifier";
+
+            var response = await utilisateurService.Get(id);
+            if (response.EsCorrect)
+            {
+                model = (UtilisateurDTO)response.Resultat!;
+                model.ConfirmerMotPasse = model.MotPasse;
+
+            }
+            else
+                toastService.ShowWarning(response.Message);
+        }
+    }
+
+    private async Task SavegarderChangements()
+    {
+        if (model.MotPasse != model.ConfirmerMotPasse)
+        {
+            toastService.ShowWarning("La confirmation et le mot de passe de correspondent pas");
+            return;
+        }
+
+        bool reponse = true;
+        string message = string.Empty;
+
+        if (id != 0)
+        {
+            var response = await utilisateurService.Update(model);
+            if (response.EsCorrect)
+            {
+                message = "Utilisateur Modeifier";
+            }
+            else
+            {
+                reponse = false;
+                message = "Edition Impossible";
+            }
+        }
+        else
+        {
+            model.Role = "administrateur";
+            var response = await utilisateurService.Add(model);
+
+            if (response.EsCorrect)
+            {
+                message = "Utilisateur Ajouter";
+            }
+            else
+            {
+                reponse = false;
+                message = "l'utilisateur ne peut pas etre ajouter";
+            }
+        }
+
+
+        toastService.ShowSuccess(message);
+
+        if (reponse)
+        {
+            _nav.NavigateTo("/utilisateurs");
+        }
+
+
+
+    }
 }
