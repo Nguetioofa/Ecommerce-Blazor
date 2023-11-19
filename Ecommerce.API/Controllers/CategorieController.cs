@@ -20,7 +20,7 @@ namespace Ecommerce.API.Controllers
             _categorieService = categorieService;
         }
 
-        [HttpGet("list/{chercher:alpha?}")]
+        [HttpGet("list/{recherche?}")]
         public async Task<IActionResult> List(string recherche = "NA")
         {
             var response = new ReponseDTO<List<CategorieDTO>>();

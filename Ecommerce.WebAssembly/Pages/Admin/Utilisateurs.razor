@@ -2,7 +2,7 @@
 
 @inject IUtilisateurService utilisateurService
 @inject IToastService toastService
-@inject SweetAlertService swal
+@inject SweetAlertService Swal
 
 <div class="row justify-content-center  mt-3">
     <div class="col-sm-6 col-md-4 col-xl-3 mb-4">
@@ -85,7 +85,7 @@
 
     private async Task Supprimer(UtilisateurDTO model)
     {
-        SweetAlertResult result = await swal.FireAsync(new SweetAlertOptions
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
         {
             Title = "Est vous vraiment sur de vouloir supprimer?",
             Text = $"Effacer: {model.NomComplet}?",

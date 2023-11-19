@@ -20,7 +20,7 @@ namespace Ecommerce.API.Controllers
                 _utilisateurService = utilisateurService;
         }
 
-        [HttpGet("list/{role:alpha}/{recherche:alpha?}")]
+        [HttpGet("list/{role:alpha}/{recherche?}")]
         public async Task<IActionResult> List(string role,string recherche = "NA")
         {
             var response = new ReponseDTO<List<UtilisateurDTO>>();

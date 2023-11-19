@@ -18,6 +18,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredToast();
+builder.Services.AddSweetAlert2();
 
 
 builder.Services.AddScoped<IUtilisateurService, UtilisateurService>();
@@ -27,6 +28,5 @@ builder.Services.AddScoped<IPanierService, PanierService>();
 builder.Services.AddScoped<IProduitService, ProduitService>();
 builder.Services.AddScoped<IVenteService, VenteService>();
 
-builder.Services.AddSweetAlert2();
 
 await builder.Build().RunAsync();

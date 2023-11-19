@@ -1,8 +1,103 @@
 ﻿@page "/categorie"
 @page "/categorie/{id:int}"
 
-<h3>Categorie</h3>
+
+@inject ICategorieService categorieService
+@inject IToastService toastService
+@inject NavigationManager _nav
+
+
+<div class="row justify-content-center  mt-3">
+    <p class="col-sm-12 col-md-8 col-xl-10 h4 mt-2">@Titre</p>
+</div>
+<div class="row justify-content-center  mt-3">
+    <div class="col-sm-12 col-md-8 col-xl-10">
+
+        <EditForm Model="model" OnValidSubmit="SavegarderChangements">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <div class="input-group">
+                <span class="input-group-text bg-light">Nom</span>
+                <input type="text" class="form-control" @bind-value="model.Nom">
+            </div>
+            <ValidationMessage For="@(()=>model.Nom)" />
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary" style="width:130px">@Bouton</button>
+                <a href="/categories" class="btn btn-secondary" style="width:130px">retour</a>
+            </div>
+        </EditForm>
+
+    </div>
+
+</div>
+
 
 @code {
 
+    [Parameter]
+    public int id { get; set; }
+    private string Titre = "Nouvel Categorie";
+    private string Bouton = "Creer";
+    private CategorieDTO model = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id != 0)
+        {
+            Titre = "Editer Categorie";
+            Bouton = "Modifier";
+
+            var response = await categorieService.Get(id);
+            if (response.EsCorrect)
+            {
+                model = (CategorieDTO)response.Resultat!;
+            }
+            else
+                toastService.ShowWarning(response.Message);
+        }
+    }
+
+    private async Task SavegarderChangements()
+    {
+
+
+        bool reponse = true;
+        string message = string.Empty;
+
+        if (id != 0)
+        {
+            var response = await categorieService.Update(model);
+            if (response.EsCorrect)
+            {
+                message = "Categorie Modifier";
+            }
+            else
+            {
+                reponse = false;
+                message = "Edition Impossible";
+            }
+        }
+        else
+        {
+            var response = await categorieService.Add(model);
+
+            if (response.EsCorrect)
+            {
+                message = "Categorie Ajouter";
+            }
+            else
+            {
+                reponse = false;
+                message = "l'Categorie ne peut pas etre ajouter";
+            }
+        }
+
+        toastService.ShowSuccess(message);
+
+        if (reponse)
+        {
+            _nav.NavigateTo("/categories");
+        }
+
+    }
 }
