@@ -1,8 +1,189 @@
 ﻿@page "/produit"
 @page "/produit/{id:int}"
 
-<h3>Produits</h3>
+@inject IProduitService produitService
+@inject ICategorieService categorieService
+@inject IToastService toastService
+@inject NavigationManager _nav
+
+
+
+
+<div class="row justify-content-center  mt-3">
+    <p class="col-sm-12 col-md-8 col-xl-10 h4 mt-2">@Titre</p>
+</div>
+<div class="row justify-content-center  mt-3">
+    <div class="col-sm-12 col-md-8 col-xl-10">
+
+        <EditForm Model="model" OnValidSubmit="SavegarderChangements">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <div class="input-group">
+                <span class="input-group-text bg-light" id="basic-addon3">Nom</span>
+                <input type="text" class="form-control" @bind-value="model.Nom">
+            </div>
+            <ValidationMessage For="@(()=>model.Nom)" />
+
+            <div class="input-group  mt-3">
+                <span class="input-group-text bg-light">Descripcion</span>
+                <textarea class="form-control" @bind="model.Description"></textarea>
+
+            </div>
+            <ValidationMessage For="@(()=>model.Description)" />
+
+            <div class="input-group mt-3">
+                <label class="input-group-text bg-light" for="inputGroupSelect01">Categorie</label>
+                <select class="form-select" value="@model.IdCategorie" @onchange="ChangementCategorie">
+                    @foreach (var item in listCategorie)
+                    {
+                        <option value="@item.IdCategorie">@item.Nom</option>
+                    }
+                </select>
+            </div>
+
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Prix</span>
+                <input type="number" class="form-control" @bind-value="model.Prix">
+            </div>
+            <ValidationMessage For="@(()=>model.Prix)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Prix offert</span>
+                <input type="number" class="form-control" @bind-value="model.PrixOffre">
+            </div>
+            <ValidationMessage For="@(()=>model.PrixOffre)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Quantite</span>
+                <input type="number" class="form-control" @bind-value="model.Quantite">
+            </div>
+            <ValidationMessage For="@(()=>model.Quantite)" />
+
+            <div class="input-group mt-3">
+                <label class="input-group-text bg-light">Imagen</label>
+                <InputFile type="file" class="form-control" accept="image/png, image/gif, image/jpeg" OnChange="OnFileChange"></InputFile>
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary" style="width:130px">@Bouton</button>
+                <a href="/produits" class="btn btn-secondary" style="width:130px">retour</a>
+            </div>
+        </EditForm>
+
+
+
+
+    </div>
+
+</div>
+
 
 @code {
+
+    [Parameter]
+    public int id { get; set; }
+    private string Titre = "Nouvel Produit";
+    private string Bouton = "Creer";
+    private ProduitDTO model = new();
+    private List<CategorieDTO>? listCategorie = new List<CategorieDTO>();
+
+    private async Task GetCategories()
+    {
+        var response = await categorieService.List(string.Empty);
+        if (response.EsCorrect)
+        {
+            listCategorie = (List<CategorieDTO>)response.Resultat!;
+        }
+
+        if (listCategorie.Any() && id == 0)
+        {
+            model.IdCategorie = listCategorie.First().IdCategorie;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCategories();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id != 0)
+        {
+            Titre = "Editer Categorie";
+            Bouton = "Modifier";
+
+            var response = await produitService.Get(id);
+            if (response.EsCorrect)
+            {
+                model = (ProduitDTO)response.Resultat!;
+            }
+            else
+                toastService.ShowWarning(response.Message);
+        }
+    }
+
+    void ChangementCategorie(ChangeEventArgs e)
+    {
+        model.IdCategorie = Convert.ToInt32(e.Value.ToString());
+    }
+
+    async Task OnFileChange(InputFileChangeEventArgs e)
+    {
+        FileInfo fileInfo = new FileInfo(e.File.Name);
+
+        if (fileInfo.Extension.ToLower().Contains(".jpg") || fileInfo.Extension.ToLower().Contains(".png"))
+        {
+            var format = $"image/{fileInfo.Extension.Replace(".", "")}";
+            var resizeImage = await e.File.RequestImageFileAsync(format, 450, 300);
+            var buffer = new byte[resizeImage.Size];
+            await resizeImage.OpenReadStream().ReadAsync(buffer);
+            var imageData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+            model.Image = imageData;
+        }
+    }
+
+    private async Task SavegarderChangements()
+    {
+
+
+        bool reponse = true;
+        string message = string.Empty;
+
+        if (id != 0)
+        {
+            var response = await produitService.Update(model);
+            if (response.EsCorrect)
+            {
+                message = "Produit Modifier";
+            }
+            else
+            {
+                reponse = false;
+                message = "Edition Impossible";
+            }
+        }
+        else
+        {
+            var response = await produitService.Add(model);
+
+            if (response.EsCorrect)
+            {
+                message = "Produit Ajouter";
+            }
+            else
+            {
+                reponse = false;
+                message = "le Produit ne peut pas etre ajouter";
+            }
+        }
+
+        toastService.ShowSuccess(message);
+
+        if (reponse)
+        {
+            _nav.NavigateTo("/produits");
+        }
+
+    }
 
 }
