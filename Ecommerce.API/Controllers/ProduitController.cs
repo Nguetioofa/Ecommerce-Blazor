@@ -43,14 +43,14 @@ namespace Ecommerce.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("catalogue/{categorie:alpha}/{chercher:alpha?}")]
+        [HttpGet("catalogue/{categorie}/{recherche?}")]
         public async Task<IActionResult> Catalogue(string categorie,string recherche = "NA")
         {
             var response = new ReponseDTO<List<ProduitDTO>>();
 
             try
             {
-                if (recherche.ToLower() == "todos") categorie = string.Empty;
+                if (categorie.ToLower() == "tous") categorie = string.Empty;
                 if (recherche == "NA") recherche = string.Empty;
 
                 response.EsCorrect = true;

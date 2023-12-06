@@ -1,7 +1,91 @@
 ﻿@page "/detail/{id:int}"
 
-<h3>Detail</h3>
+@inject IProduitService produitService
+@inject IPanierService panierService
+@inject IToastService toastService
+@inject NavigationManager _nav
+
+<div class="container px-4 px-lg-5 my-5">
+
+
+    @if (model != null)
+    {
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                <img class="card-img-top border-dark border-1" src="@model.Image" style="width:100%;">
+            </div>
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bolder">@model.Nom</h1>
+                <div class="fs-5 mb-5">
+                    @if (model.PrixOffre > 0 && model.PrixOffre < model.Prix)
+                    {
+                        <span class="text-danger text-decoration-line-through"> @model.Prix Fcfa</span>
+                        <span>@model.PrixOffre Fcfa</span>
+                    }
+                    else
+                    {
+                        <span>@model.Prix Fcfa</span>
+                    }
+
+                </div>
+                <p class="lead">@model.Description</p>
+                <div class="d-flex">
+                    <input class="form-control text-center me-3" type="number" min="1" style="width:60px" @bind-value="@quantite">
+                    <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await AjouterPanier(model))">
+                        <i class="bi-cart-fill me-1"></i>
+                        Ajouter au panier
+                    </button>
+                    <a class="btn btn-outline-dark flex-shrink-0" href="/catalogue">
+                        <i class="bi-cart-fill me-1"></i>
+                        retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+
+
+
+</div>
 
 @code {
 
+    [Parameter]
+    public int id { get; set; }
+    private ProduitDTO? model = null;
+    private int quantite = 1;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id > 0)
+        {
+            var response = await produitService.Get(id);
+            if (response.EsCorrect)
+            {
+                model = (ProduitDTO)response.Resultat!;
+            }
+            else
+                toastService.ShowWarning(response.Message);
+        }
+    }
+
+    private async Task AjouterPanier(ProduitDTO model)
+    {
+        decimal? prixFinal = (model.PrixOffre > 0 && model.PrixOffre < model.Prix) ? model.PrixOffre : model.Prix;
+        PanierDTO panier = new()
+            {
+                produit = model,
+                Quantite = quantite,
+                Prix = prixFinal,
+                Total = quantite * prixFinal
+            };
+
+            await panierService.AjouterPanier(panier);
+    }
 }

@@ -1,4 +1,6 @@
-﻿
+﻿@inject IPanierService panierService
+@implements IDisposable 
+
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand" runat="server" href="#">Ecommerce Demo</a>
@@ -25,7 +27,7 @@
             <a class="btn btn-outline-dark ms-auto ms-md-0 me-3" href="/cart">
                 <i class="bi-cart-fill me-1"></i>
                 Cart
-                <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                <span class="badge bg-dark text-white ms-1 rounded-pill">@AfficherNombreElement()</span>
             </a>
 
             <button class="btn btn-outline-dark ms-auto ms-md-0 me-3" type="button">Effacer</button>
@@ -45,4 +47,20 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+    protected override void OnInitialized()
+    {
+        panierService.NombresElements += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        panierService.NombresElements -= StateHasChanged;
+    }
+
+    private int AfficherNombreElement()
+    {
+        return panierService.QunatiteProduits();
+    }
+
 }

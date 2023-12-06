@@ -21,7 +21,6 @@ namespace Ecommerce.WebAssembly.Services.Implementations
         {
             var response = await _httpClient.PostAsJsonAsync($"{CONTOLLERNAME}/add", model);
             var result = await response.Content.ReadFromJsonAsync<ReponseDTO<CategorieDTO>>();
-
             return result!;
         }
 
