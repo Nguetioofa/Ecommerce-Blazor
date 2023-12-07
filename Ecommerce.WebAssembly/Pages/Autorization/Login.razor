@@ -1,8 +1,67 @@
 ﻿@page "/login"
 @layout LoginLayout
 
-<h3>Login</h3>
+@inject IUtilisateurService utilisateurService
+@inject NavigationManager _nav
+@inject IToastService toastService
+@inject AuthenticationStateProvider authentificationState
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="card rounded-lg mt-5">
+                <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
+                <div class="card-body">
+                    <EditForm Model="model" OnValidSubmit="Connexion">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputEmail" type="email" placeholder="admin@example.com" @bind-value="model.Email" autocomplete="off" />
+                            <label for="inputEmail">Email</label>
+                            <ValidationMessage For="@(()=>model.Email)" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputPassword" type="password" placeholder="123" @bind-value="model.MotPasse" autocomplete="off" />
+                            <label for="inputPassword">Mot de passe</label>
+                            <ValidationMessage For="@(()=>model.MotPasse)" />
+                        </div>
+
+                        <div class="d-grid gap-1 mt-4 mb-0">
+                            <button class="btn btn-primary" type="submit">Connexion</button>
+                        </div>
+                    </EditForm>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <div class="small"><a href="/register">pas encore de compte? Creer votre compte</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
+    private LoginDTO model = new();
 
+    private async Task Connexion()
+    {
+        var response = await utilisateurService.Autorization(model);
+
+        if (response.EsCorrect)
+        {
+            SessionDTO session = response.Resultat!;
+
+            var authen = (AuthentificationExtension)authentificationState;
+
+            await authen.ActualiserStatutAuthentification(session);
+
+            if (session.Role.Equals("client", StringComparison.InvariantCultureIgnoreCase))
+                _nav.NavigateTo("/");
+            else
+                _nav.NavigateTo("/dashboard");
+        }
+        else
+        {
+            toastService.ShowWarning(response.Message);
+        }
+    }
 }
