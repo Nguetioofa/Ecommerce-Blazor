@@ -3,6 +3,8 @@
 @inject SweetAlertService Swal
 @inject ICategorieService categorieService
 
+@attribute [Authorize(Roles = "administrateur")]
+
 <div class="row justify-content-center  mt-3">
     <div class="col-sm-6 col-md-4 col-xl-3 mb-4">
         <div class="d-grid gap-1 col-12 mx-auto">

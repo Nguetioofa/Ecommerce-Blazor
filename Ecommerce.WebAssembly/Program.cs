@@ -8,6 +8,9 @@ using Blazored.Toast;
 using Ecommerce.WebAssembly.Services.Contrats;
 using Ecommerce.WebAssembly.Services.Implementations;
 
+using Microsoft.AspNetCore.Components.Authorization;
+using Ecommerce.WebAssembly.Extensions;
+
 using CurrieTechnologies.Razor.SweetAlert2;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -28,5 +31,7 @@ builder.Services.AddScoped<IPanierService, PanierService>();
 builder.Services.AddScoped<IProduitService, ProduitService>();
 builder.Services.AddScoped<IVenteService, VenteService>();
 
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthentificationExtension>();
 
 await builder.Build().RunAsync();

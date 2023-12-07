@@ -126,7 +126,7 @@
                     </div>
                 </EditForm>
 
-                @* COMMENTEZ TOUT CELA                
+                @* COMMENTEZ TOUT CELA  *@              
                 <AuthorizeView>
                     <NotAuthorized>
                         <div class="alert alert-danger mt-2" role="alert">
@@ -134,7 +134,7 @@
                         </div>
                     </NotAuthorized>
                 </AuthorizeView>
-                *@
+                
 
             </div>
         </div>
@@ -147,9 +147,15 @@
     private decimal? Total = 0;
     private CarteCreditDTO carteCredit = new();
 
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         list = await panierService.PanierList();
+        var authState = await authenticationState;
+        if (authState.User.Identity.IsAuthenticated)
+            disabled = false;
     }
 
     private void Diminution(int id)
@@ -203,9 +209,12 @@
             Total = panier.Total
         }));
 
+        var authState = await authenticationState;
+        var idUser = authState.User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).Single();
+
         VenteDTO model = new VenteDTO()
         {
-             IdUtilisateur = 1,
+             IdUtilisateur = Convert.ToInt32(idUser),
              Total = list.Sum(v => v.Total),
              DetailVentes = detailVentes
         };
@@ -221,7 +230,6 @@
         else
         {
             toasteServcie.ShowError(response.Message);
-
         }
     }
 
